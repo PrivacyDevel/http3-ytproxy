@@ -16,7 +16,7 @@ import (
 
 	"github.com/kolesa-team/go-webp/encoder"
 	"github.com/kolesa-team/go-webp/webp"
-	"github.com/lucas-clemente/quic-go/http3"
+	"github.com/quic-go/quic-go/http3"
 )
 
 // http/3 client
@@ -304,6 +304,11 @@ func main() {
 
 	disable_ipv6 = os.Getenv("DISABLE_IPV6") == "1"
 	disable_webp = os.Getenv("DISABLE_WEBP") == "1"
+	var port = os.Getenv("PORT")
+
+	if port == "" {
+		port = "8080"
+	}
 
 	socket := "socket" + string(os.PathSeparator) + "http-proxy.sock"
 	syscall.Unlink(socket)
@@ -311,7 +316,7 @@ func main() {
 	srv := &http.Server{
 		ReadTimeout:  5 * time.Second,
 		WriteTimeout: 1 * time.Hour,
-		Addr:         ":8080",
+		Addr:         ":" + port,
 		Handler:      &requesthandler{},
 	}
 	if err != nil {
